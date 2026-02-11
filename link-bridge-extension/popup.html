@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* Modern Reset & Base Styles */
+        * { box-sizing: border-box; }
+        body {
+            width: 320px;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #fff;
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+            background-color: #f8f9fa;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 15px 0;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6c757d;
+            background: none;
+            border: none;
+            outline: none;
+            position: relative;
+            transition: color 0.2s ease;
+        }
+        .tab-btn.active {
+            color: #007bff;
+        }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #007bff;
+        }
+
+        /* Tab Content Sections */
+        .tab-content {
+            padding: 20px;
+            display: none; /* Hidden by default */
+        }
+        .tab-content.active {
+            display: block; /* Show only the active one */
+        }
+
+        /* Form Elements */
+        .input-group {
+            margin-bottom: 15px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #495057;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus {
+            border-color: #80bdff;
+        }
+
+        /* Buttons */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #007bff;
+            color: #007bff;
+            margin-bottom: 10px;
+            font-size: 14px;
+            padding: 8px;
+        }
+        .btn-outline:hover {
+            background-color: #f0f8ff;
+        }
+        .btn-icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        /* QR Code & Status */
+        .qr-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 180px; /* Keep space so it doesn't jump */
+        }
+        #status {
+            margin-top: 15px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        /* Fade in animation for QR */
+        #qrcode-send img, #qrcode-receive img {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+    <script src="qrcode.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="send">Send</button>
+        <button class="tab-btn" data-tab="receive">Receive</button>
+    </div>
+
+    <div id="tab-send" class="tab-content active">
+        <div class="input-group">
+            <input type="text" id="send-input" placeholder="Paste URL here...">
+        </div>
+        <button id="btn-paste" class="btn btn-outline">
+            <i class="fa-solid fa-clipboard btn-icon"></i> Paste
+        </button>
+        <button id="btn-generate" class="btn btn-primary">
+            <i class="fa-solid fa-qrcode btn-icon"></i> Generate QR
+        </button>
+        <div id="qrcode-send" class="qr-container"></div>
+    </div>
+
+    <div id="tab-receive" class="tab-content">
+        <div id="qrcode-receive" class="qr-container"></div>
+        <div id="status">Waiting for you to switch tabs...</div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
