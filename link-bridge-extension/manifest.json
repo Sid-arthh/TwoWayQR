@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Link Bridge",
+  "version": "2.0",
+  "description": "Send links between Phone and PC",
+  "permissions": ["activeTab", "clipboardRead"],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
