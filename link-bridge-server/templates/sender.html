@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LinkBridge</title>
+    <title>QRLinkDrop</title>
     <style>
-        /* 1. SPEED OPTIMIZATION: Use System Fonts (Zero download time) */
+        /* 1. SPEED OPTIMIZATION: System Fonts */
         :root {
             --bg-color: #000000;
             --text-color: #ffffff;
-            --accent-color: #2563eb; /* Bright Blue */
-            --accent-glow: rgba(37, 99, 235, 0.5);
+            --accent-color: #3b82f6; /* Bright Blue */
+            --accent-glow: rgba(59, 130, 246, 0.5);
             --surface-color: #1a1a1a;
         }
 
@@ -19,34 +19,45 @@
             color: var(--text-color);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            height: 100vh; /* Full viewport height */
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Vertically center everything */
+            justify-content: center;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 2. LAYOUT: Central Stack */
+        /* 2. LAYOUT */
         .container {
             width: 100%;
             max-width: 360px;
             padding: 20px;
             box-sizing: border-box;
-            text-align: center; /* Ensures text inside is centered */
+            text-align: center;
             display: flex;
             flex-direction: column;
-            align-items: center; /* Ensures buttons are centered horizontally */
+            align-items: center;
         }
 
         h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin: 0 0 40px 0;
-            letter-spacing: -0.5px;
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0 0 8px 0;
+            letter-spacing: -1px;
+            /* Gradient Text Effect */
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        p.subtitle {
+            color: #888;
+            margin-bottom: 40px;
+            font-size: 15px;
+            font-weight: 400;
         }
 
-        /* 3. BUTTONS: Touch-friendly Pill Shapes */
+        /* 3. BUTTONS */
         .btn-main {
             background-color: var(--accent-color);
             color: white;
@@ -55,29 +66,25 @@
             padding: 18px 0;
             font-size: 18px;
             font-weight: 600;
-            border-radius: 50px;
+            border-radius: 16px; 
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
-            box-shadow: 0 0 20px var(--accent-glow); /* Neon glow */
+            box-shadow: 0 4px 20px var(--accent-glow);
             transition: transform 0.1s active;
             -webkit-tap-highlight-color: transparent;
         }
 
-        .btn-main:active {
-            transform: scale(0.96);
-            opacity: 0.9;
-        }
+        .btn-main:active { transform: scale(0.96); opacity: 0.9; }
 
-        /* Secondary Button - CENTERED and outlined */
         .btn-secondary {
             background: transparent;
-            color: #888;
+            color: #666;
             border: 1px solid #333;
             padding: 12px 30px;
-            margin-top: 25px; /* Spacing from top button */
+            margin-top: 25px;
             border-radius: 50px;
             font-size: 14px;
             font-weight: 500;
@@ -86,20 +93,16 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .btn-secondary:active {
-            background: #222;
-            color: #fff;
-            border-color: #555;
-        }
+        .btn-secondary:active { background: #222; color: #fff; border-color: #555; }
 
-        /* Manual Input Area (Hidden) */
+        /* Manual Input Area */
         #manual-area {
             display: none;
             width: 100%;
             margin-top: 20px;
             background: var(--surface-color);
             padding: 15px;
-            border-radius: 20px;
+            border-radius: 16px;
             box-sizing: border-box;
         }
 
@@ -108,7 +111,7 @@
             padding: 14px;
             background: #000;
             border: 1px solid #333;
-            border-radius: 12px;
+            border-radius: 10px;
             color: white;
             font-size: 16px;
             box-sizing: border-box;
@@ -117,7 +120,7 @@
 
         input:focus { border-color: var(--accent-color); }
 
-        /* Loader Animation */
+        /* Loader */
         .loader {
             border: 3px solid rgba(255,255,255,0.1);
             border-top: 3px solid #fff;
@@ -125,9 +128,8 @@
             width: 20px;
             height: 20px;
             animation: spin 1s linear infinite;
-            display: none; /* Hidden by default */
+            display: none;
         }
-
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     </style>
@@ -135,7 +137,8 @@
 <body>
 
     <div class="container">
-        <h1>Send Link</h1>
+        <h1>QRLinkDrop</h1>
+        <p class="subtitle">Securely Drop to PC</p>
 
         <form onsubmit="return false;" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
             <input type="hidden" id="roomInput" value="{{ room }}">
@@ -147,23 +150,23 @@
             </button>
 
             <button type="button" class="btn-secondary" onclick="toggleManual()">
-                Send Manually
+                Type Manually
             </button>
 
             <div id="manual-area">
                 <input type="text" id="manualInput" placeholder="https://..." onkeypress="handleEnter(event)">
-                <button type="button" class="btn-main" style="margin-top: 15px; font-size: 16px; padding: 12px;" onclick="sendManual()">Send</button>
+                <button type="button" class="btn-main" style="margin-top: 15px; font-size: 16px; padding: 12px; box-shadow: none;" onclick="sendManual()">Drop It</button>
             </div>
         </form>
         
-        <p style="margin-top: 50px; color: #333; font-size: 12px;">LinkBridge v1.0</p>
+        <p style="margin-top: 60px; color: #333; font-size: 12px;">v1.0 • Encrypted</p>
     </div>
 
     <script>
         async function submitData(text) {
             if(!text) return;
             
-            // Show Loading State
+            // UI Loading State
             document.getElementById('btn-text').style.display = 'none';
             document.getElementById('loader').style.display = 'block';
 
@@ -173,19 +176,19 @@
             formData.append('url', text);
 
             try {
-                // AJAX Request
                 await fetch('/push', { method: 'POST', body: formData });
                 
-                // Ghost Mode (Success)
+                // Success: Ghost Mode (Fade to Black)
                 document.body.style.opacity = '0';
                 setTimeout(() => {
                     document.body.innerHTML = '';
                     document.body.style.backgroundColor = 'black';
+                    document.title = "Dropped";
                 }, 300);
 
             } catch (err) {
                 alert("Error sending link.");
-                // Reset Button
+                // Reset UI
                 document.getElementById('btn-text').style.display = 'block';
                 document.getElementById('loader').style.display = 'none';
             }
@@ -197,7 +200,7 @@
                 if (!text) return alert("Clipboard is empty");
                 submitData(text);
             } catch (err) {
-                // If clipboard fails, open manual input automatically
+                // Fallback to manual if permission denied
                 toggleManual();
                 document.getElementById('manualInput').focus();
             }
@@ -212,7 +215,7 @@
                 secBtn.style.display = 'block';
             } else {
                 area.style.display = 'block';
-                secBtn.style.display = 'none'; // Hide the "Send Manually" button when input is open
+                secBtn.style.display = 'none';
                 document.getElementById('manualInput').focus();
             }
         }
