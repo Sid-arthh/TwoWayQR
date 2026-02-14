@@ -25,6 +25,7 @@
             align-items: center;
             justify-content: center;
             -webkit-font-smoothing: antialiased;
+            transition: opacity 0.3s ease; /* Smooth fade for Ghost Mode */
         }
 
         /* 2. LAYOUT */
@@ -178,8 +179,21 @@
             try {
                 await fetch('/push', { method: 'POST', body: formData });
                 
-                // Success: Ghost Mode (Fade to Black)
+                // === AGGRESSIVE CLOSE LOGIC ===
+                
+                // 1. Try standard close (Works if opened by script)
+                window.close();
+                
+                // 2. Try history back (Works if opened as new nav)
+                try { 
+                    if(window.history.length > 1) {
+                        window.history.back();
+                    }
+                } catch(e) {}
+
+                // 3. FALLBACK: Ghost Mode (Fade to Black)
                 document.body.style.opacity = '0';
+                
                 setTimeout(() => {
                     document.body.innerHTML = '';
                     document.body.style.backgroundColor = 'black';
