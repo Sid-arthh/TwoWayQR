@@ -4,30 +4,96 @@
     <title>Send to PC</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; text-align: center; background-color: #f4f4f9; }
-        input { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; padding: 15px; background: #007bff; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
-        button:active { background: #0056b3; }
-        h2 { color: #333; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            padding: 20px; 
+            text-align: center; 
+            background-color: #f4f4f9; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 90vh;
+        }
+        
+        /* The Big Main Button */
+        .clipboard-btn { 
+            width: 100%; 
+            max-width: 300px;
+            padding: 25px; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 20px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+        }
+        .clipboard-btn:active { transform: scale(0.98); background: #0056b3; }
+
+        /* Fallback section (initially hidden) */
+        #manual-section { display: none; margin-top: 20px; width: 100%; max-width: 300px; }
+        
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .manual-btn { width: 100%; padding: 12px; background: #6c757d; color: white; border: none; border-radius: 8px; font-size: 16px; }
     </style>
 </head>
 <body>
-    <h2>Paste Link for PC</h2>
-    <form action="/push" method="post">
+
+    <h2 style="margin-bottom: 30px;">Tap to Send Link</h2>
+
+    <form id="sendForm" action="/push" method="post">
         <input type="hidden" name="room" value="{{ room }}">
-        <input type="text" name="url" id="urlInput" placeholder="https://..." required>
-        <br>
-        <button type="submit">Send to PC</button>
+        
+        <input type="hidden" name="url" id="urlInput">
+
+        <button type="button" class="clipboard-btn" onclick="sendClipboard()">
+            📋 Paste & Send <br>from Clipboard
+        </button>
+
+        <div id="manual-section">
+            <p style="font-size: 14px; color: #666;">Clipboard blocked? Type below:</p>
+            <input type="text" id="manualInput" placeholder="https://..." >
+            <button type="button" class="manual-btn" onclick="sendManual()">Send Manually</button>
+        </div>
     </form>
+
     <script>
-        // Auto-focus the input
-        document.getElementById('urlInput').focus();
-        // Optional: Try to read clipboard automatically (often blocked by mobile browsers for privacy, but worth a try)
-        navigator.clipboard.readText().then(text => {
-            if(text.startsWith('http')) {
+        async function sendClipboard() {
+            try {
+                // 1. Ask/Read Clipboard
+                const text = await navigator.clipboard.readText();
+                
+                if (!text) {
+                    alert("Your clipboard is empty!");
+                    return;
+                }
+
+                // 2. Fill the hidden input and submit
                 document.getElementById('urlInput').value = text;
+                document.getElementById('sendForm').submit();
+
+            } catch (err) {
+                // 3. If permission denied, show manual input
+                console.error("Clipboard access denied:", err);
+                alert("Browser blocked clipboard access. Please type manually below.");
+                
+                // Show manual input section
+                document.getElementById('manual-section').style.display = 'block';
+                // Switch hidden input to manual text logic
+                document.getElementById('manualInput').focus();
             }
-        }).catch(err => {});
+        }
+
+        function sendManual() {
+            const manualText = document.getElementById('manualInput').value;
+            if(manualText) {
+                document.getElementById('urlInput').value = manualText;
+                document.getElementById('sendForm').submit();
+            }
+        }
     </script>
 </body>
 </html>
